@@ -1,0 +1,15 @@
+---
+version: '3'
+services:
+
+#
+# dynamic dns updater
+#
+  ddns_client:
+    env_file:
+      - auth.env
+    environment:
+      - 'TAILSCALE_NETWORK=tenzin-io.org.github'
+      - 'CLOUDFLARE_ZONE=tenzin.io'
+    build:
+      context: ./build-ddns_client 
