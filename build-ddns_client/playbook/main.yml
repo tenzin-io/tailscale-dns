@@ -9,6 +9,7 @@
     tailscale_key: "{{ lookup('env', 'TAILSCALE_KEY') }}"
     cloudflare_zone: "{{ lookup('env', 'CLOUDFLARE_ZONE') }}"
     cloudflare_key: "{{ lookup('env', 'CLOUDFLARE_KEY') }}"
+
   tasks:
     - name: Get all devices on {{ tailscale_network }}
       uri:
