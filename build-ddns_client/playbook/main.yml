@@ -1,0 +1,31 @@
+#!/usr/bin/ansible-playbook
+---
+- name: Setup Docker host
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  vars:
+    tailscale_network: "{{ lookup('env', 'TAILSCALE_NETWORK') }}"
+    tailscale_key: "{{ lookup('env', 'TAILSCALE_KEY') }}"
+    cloudflare_zone: "{{ lookup('env', 'CLOUDFLARE_ZONE') }}"
+    cloudflare_key: "{{ lookup('env', 'CLOUDFLARE_KEY') }}"
+  tasks:
+    - name: Get all devices on {{ tailscale_network }}
+      uri:
+        url:  https://api.tailscale.com/api/v2/tailnet/{{ tailscale_network }}/devices
+        url_username: '{{ tailscale_key }}'
+        url_password: ''
+        force_basic_auth: true
+        method: GET
+      register: response 
+
+    - name: Create DNS records for tailnet devices
+      community.general.cloudflare_dns:
+        zone: '{{ cloudflare_zone }}'
+        record: '{{ device.hostname }}'
+        type: A
+        value: '{{ device.addresses[0] }}'
+        api_token: '{{ cloudflare_key }}'
+      loop: '{{ response.json.devices }}'
+      loop_control:
+        loop_var: device
