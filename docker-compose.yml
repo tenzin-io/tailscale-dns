@@ -9,6 +9,7 @@ services:
     env_file:
       - auth.env
     environment:
+      - 'POLL=3600'
       - 'TAILSCALE_NETWORK=tenzin-io.org.github'
       - 'CLOUDFLARE_ZONE=tenzin.io'
     build:
